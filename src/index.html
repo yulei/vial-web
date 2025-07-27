@@ -131,8 +131,70 @@ body {
             document.getElementById("startup").style.display = "none";
         } else if (e.data.cmd == "notify_alive") {
             document.getElementById("startup_btn").disabled = false;
+        } else if (e.data.cmd == "load_layout") {
+            loadLayout();
+        } else if (e.data.cmd == "save_layout") {
+            saveLayout(e.data.layout);
         } else if (e.data.cmd == "fatal_error") {
             alert(e.data.msg);
+        }
+    }
+
+    const FILE_OPTIONS = {
+        types: [
+            {
+                description: "Vial layout",
+                accept: { "application/json": [".vil"] },
+            },
+        ],
+        excludeAcceptAllOption: false,
+        multiple: false,
+    };
+
+    async function loadLayout() {
+        if (!window.showOpenFilePicker) {
+            alert("File loading API unavailable. Please use a newer browser.");
+            return;
+        }
+
+        const [handle] = await window.showOpenFilePicker(FILE_OPTIONS);
+
+        if (!handle) {
+            return;
+        }
+
+        const file = await handle.getFile();
+        const layout = await file.text();
+
+        PThread.runningWorkers[0].postMessage({
+            cmd: "py",
+            payload: `import webmain;webmain.window.on_layout_loaded(b${JSON.stringify(layout)})`,
+        });
+    }
+
+    async function saveLayout(layout) {
+        if (window.showSaveFilePicker) {
+            // This shows a file chooser dialog. It's a nicer experience
+            // if available, allowing the user to select a target
+            // filename and directory.
+            const handle = await window.showSaveFilePicker(FILE_OPTIONS);
+            const stream = await handle.createWritable();
+            await stream.write(layout);
+            await stream.close();
+        } else {
+            // If the File System API isn't available, we can at least
+            // trigger a simple download with a hardcoded filename.
+            const download = document.createElement('a');
+            download.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(layout));
+            download.setAttribute('download', 'layout.vil');
+
+            if (document.createEvent) {
+                var event = document.createEvent('MouseEvents');
+                event.initEvent('click', true, true);
+                download.dispatchEvent(event);
+            } else {
+                download.click();
+            }
         }
     }
 
