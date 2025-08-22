@@ -167,6 +167,15 @@ static PyObject* vialglue_fatal_error(PyObject *self, PyObject *args) {
     return PyLong_FromLong(0);
 }
 
+static PyObject * amk_notify_reload(PyObject *self, PyObject *args) {
+    EM_ASM({
+        postMessage({cmd: "reload_keyboard"});
+    });
+
+    return PyLong_FromLong(0);
+}
+
+
 static PyMethodDef VialglueMethods[] = {
     {"write_device",  vialglue_write_device, METH_VARARGS, ""},
     {"read_device",  vialglue_read_device, METH_VARARGS, ""},
@@ -174,9 +183,10 @@ static PyMethodDef VialglueMethods[] = {
     {"unlock_status",  vialglue_unlock_status, METH_VARARGS, ""},
     {"unlock_done",  vialglue_unlock_done, METH_VARARGS, ""},
     {"notify_ready",  vialglue_notify_ready, METH_VARARGS, ""},
-    {"get_device_desc",  vialglue_get_device_desc, METH_VARARGS, ""},
+    {"get_device_desc",  vialglue_get_device_desc, METH_VARARGS, ""},	
     {"load_layout",  vialglue_load_layout, METH_VARARGS, ""},
     {"save_layout",  vialglue_save_layout, METH_VARARGS, ""},
+	{"reload_keyboard",  amk_notify_reload, METH_VARARGS, ""},
     {"fatal_error",  vialglue_fatal_error, METH_VARARGS, ""},
     {NULL, NULL, 0, NULL}
 };
