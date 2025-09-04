@@ -17,11 +17,14 @@ UNIQVER=$(echo ${VIAL_VER} ${WEB_VER} ${VIA_STACK_VER} | sha256sum | awk '{print
 
 cp ../icon.png .
 cp -r ../../deps/cpython/builddir/emscripten-browser/usr .
-cp ../../via-keymap-precompiled/via_keyboard_stack.json usr/local/via_keyboards.json
+#cp ../../via-keymap-precompiled/via_keyboard_stack.json usr/local/via_keyboards.json
 cp ../../vial-gui/src/main/resources/base/qmk_settings.json usr/local
 cp ../../vial-gui/src/build/settings/base.json usr/local/build_settings.json
 cp -r ../../vial-gui/src/main/python/* usr/local/lib/python3.11
 cp ../simpleeval.py usr/local/lib/python3.11
+cp ../../vial-gui/src/main/resources/base/wqy-microhei.ttc usr/local
+cp ../../vial-gui/src/main/resources/base/dks.png usr/local
+cp -r ../../firmware/data/* usr/local
 emcc \
     --preload-file="./usr/local" \
     -I ../../deps/cpython/Include/ \
