@@ -175,6 +175,31 @@ static PyObject * amk_notify_reload(PyObject *self, PyObject *args) {
     return PyLong_FromLong(0);
 }
 
+static PyObject * amk_load_firmware_info(PyObject *self, PyObject *args) {
+    const char *msg;
+
+    if (!PyArg_ParseTuple(args, "s", &msg))
+        return NULL;
+
+    EM_ASM({
+        postMessage({cmd: "load_firmware_info", url: UTF8ToString($0)});
+    }, msg);
+
+    return PyLong_FromLong(0);
+}
+
+static PyObject * amk_load_firmware_data(PyObject *self, PyObject *args) {
+    const char *msg;
+
+    if (!PyArg_ParseTuple(args, "s", &msg))
+        return NULL;
+
+    EM_ASM({
+        postMessage({cmd: "load_firmware_data", url: UTF8ToString($0)});
+    }, msg);
+
+    return PyLong_FromLong(0);
+}
 
 static PyMethodDef VialglueMethods[] = {
     {"write_device",  vialglue_write_device, METH_VARARGS, ""},
@@ -187,6 +212,8 @@ static PyMethodDef VialglueMethods[] = {
     {"load_layout",  vialglue_load_layout, METH_VARARGS, ""},
     {"save_layout",  vialglue_save_layout, METH_VARARGS, ""},
 	{"reload_keyboard",  amk_notify_reload, METH_VARARGS, ""},
+    {"load_firmware_info",  amk_load_firmware_info, METH_VARARGS, ""},
+    {"load_firmware_data",  amk_load_firmware_data, METH_VARARGS, ""},
     {"fatal_error",  vialglue_fatal_error, METH_VARARGS, ""},
     {NULL, NULL, 0, NULL}
 };

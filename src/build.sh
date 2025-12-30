@@ -24,7 +24,6 @@ cp -r ../../vial-gui/src/main/python/* usr/local/lib/python3.11
 cp ../simpleeval.py usr/local/lib/python3.11
 cp ../../vial-gui/src/main/resources/base/wqy-microhei.ttc usr/local
 cp ../../vial-gui/src/main/resources/base/dks.png usr/local
-cp -r ../../firmware/data/* usr/local
 emcc \
     --preload-file="./usr/local" \
     -I ../../deps/cpython/Include/ \

@@ -163,6 +163,10 @@ footer a:visited {
             loadLayout();
         } else if (e.data.cmd == "save_layout") {
             saveLayout(e.data.layout);
+        } else if (e.data.cmd == "load_firmware_info") {
+            loadFirmwareInfo(e.data.url);
+        } else if (e.data.cmd == "load_firmware_data") {
+            loadFirmwareData(e.data.url);
         } else if (e.data.cmd == "fatal_error") {
             alert(e.data.msg);
         }
@@ -224,6 +228,26 @@ footer a:visited {
                 download.click();
             }
         }
+    }
+
+    async function loadFirmwareInfo(url) {
+        const response = await fetch(url);
+        const data = await response.text();
+
+        PThread.runningWorkers[0].postMessage({
+            cmd: "py",
+            payload: `import webmain;webmain.window.misc.on_firmware_info_loaded(b${JSON.stringify(data)})`,
+        });
+    }
+
+    async function loadFirmwareData(url) {
+        const response = await fetch(url);
+        const data = await response.bytes();
+
+        PThread.runningWorkers[0].postMessage({
+            cmd: "py",
+            payload: `import webmain;webmain.window.misc.on_firmware_data_loaded(b${JSON.stringify(data.toBase64())})`,
+        });
     }
 
     async function connect() {
